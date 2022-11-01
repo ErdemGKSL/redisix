@@ -18,7 +18,7 @@ module.exports.RedisX = class RedisX {
    * @param {object} value
    * @param {import("redis").SetOptions} options
    */
-  async set(value, customIndexes, options = {}) {
+  async set(value, customIndexes = {}, options = {}) {
     const keys = this.#indexes.map(ix => ixv = customIndexes[ix] ?? value?.[ix], ixv ? `${this.#namespace}:${ix}:${ixv}` : null).filter(x => x);
     const pointer = (await this.#redisClient.get(keys[0])) || Math.random().toString(20).slice(2);
     await this.#redisClient.set(`$RX_POINTER:${this.#namespace}:${pointer}`, typeof value == "object" ? JSON.stringify(value) : value, options);
