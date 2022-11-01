@@ -1,6 +1,6 @@
 {
   "name": "redisix",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Indexing in redis easly",
   "main": "index.js",
   "scripts": {
