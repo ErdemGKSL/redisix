@@ -16,13 +16,13 @@ module.exports.RedisX = class RedisX {
 
   /**
    * @param {object} value
-   * @param {import("redis").SetOptions} options
+   * @param {typeof import("@redis/client/dist/lib/commands/SADD")} options
    */
   async set(value, customIndexes = {}, options = {}) {
     const keys = this.#indexes.map(ix => ixv = customIndexes[ix] ?? value?.[ix], ixv ? `${this.#namespace}:${ix}:${ixv}` : null).filter(x => x);
     const pointer = (await this.#redisClient.get(keys[0])) || Math.random().toString(20).slice(2);
     await this.#redisClient.set(`$RX_POINTER:${this.#namespace}:${pointer}`, typeof value == "object" ? JSON.stringify(value) : value, options);
-    for (let i = 0; i < keys.length; i++) await this.#redisClient.set(keys[i], pointer, options);
+    for (let i = 0; i < keys.length; i++) await this.#redisClient.sAdd(keys[i], pointer, options);
   }
 
   /**
@@ -37,7 +37,7 @@ module.exports.RedisX = class RedisX {
     let pointer;
 
     for (let key in query) {
-      pointer = await this.#redisClient.get(`${this.#namespace}:${key}:${query[key]}`);
+      pointer = await this.#redisClient.sScanIterator(`${this.#namespace}:${key}:${query[key]}`);
       if (pointer) break;
     }
 
